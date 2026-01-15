@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 function LucidityChaosMeter() {
   const [v, setV] = useState(0); // -1 (Chaos) ... 0 ... +1 (Lucidity)
@@ -92,10 +93,16 @@ useEffect(() => {
   };
 }, []);
 
-  const STORY_POINTS = [
+const STORY_POINTS = [
     "Complex plot in several acts",
     "High school students see their dreams come true... but at what cost?",
     "Shifting themes and deep lore",
+  ];
+
+const ARENA_POINTS = [
+    "Builds and character diversity: charcters played differently, specific perks, upgrades, changing how the arena is approached.",
+    "Focuses on mastery, replayability, and discovery through gameplay.",
+    "Hidden events and subtle narrative are added into the arena... to escape?",
   ];
 
 const GAMEPLAY_LOOP = [
@@ -159,17 +166,18 @@ const GAMEPLAY_LOOP = [
   ];
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-50">
+    <main className="relative min-h-screen">
+
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950/80 backdrop-blur">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-zinc-950/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
             <span
-  className={`font-semibold tracking-wide ds-pixel ds-glitch ${glitchOn ? "ds-glitch--on" : ""}`}
-  data-text="DreamShard"
->
-  DreamShard
-</span>
+            className={`font-semibold tracking-wide ds-pixel ds-glitch ${glitchOn ? "ds-glitch--on" : ""}`}
+            data-text="DreamShard"
+          >
+            DreamShard
+          </span>
 
           </div>
 
@@ -191,68 +199,67 @@ const GAMEPLAY_LOOP = [
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        {/* Background */}
-        <div className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-linear-to-b from-zinc-950 via-zinc-950/60 to-zinc-950" />
-          {/* “Pixel-ish” texture via gradients only (pas d’images requises) */}
-          <div className="absolute inset-0 opacity-40 ds-grid" />
-          <div className="absolute inset-0 opacity-25 ds-scanlines" />
-        </div>
+    {/* Global background (gradient + soft glows) */}
+    <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      <div className="absolute inset-0 bg-linear-to-br from-black via-violet-950/35 to-black" />
+      <div className="absolute -top-40 left-1/2 h-175 w-175 -translate-x-1/2 rounded-full bg-violet-700/12 blur-[140px]" />
+      <div className="absolute -bottom-75 -right-50 h-150 w-150 rounded-full bg-fuchsia-700/10 blur-[160px]" />
+    </div>
+    
 
-        <div className="mx-auto max-w-6xl px-4 py-16 md:py-24">
-          <div className="space-y-6 max-w-5xl">
-            <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-zinc-200">
-              <span className="h-2 w-2 rounded-full bg-amber-400" />
-              First phase of development — images & demo to come
-            </p>
 
-            <h1 className="text-4xl font-bold tracking-tight md:text-6xl ds-pixel">
-              DreamShard
-            </h1>
+      {/* Hero (simple, no overlays) */}
+      <section className="mx-auto max-w-6xl px-4 py-16 md:py-24">
+        <div className="space-y-6 max-w-5xl">
+          <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-zinc-200">
+            <span className="h-2 w-2 rounded-full bg-amber-400" />
+            First phase of development — images & demo to come
+          </p>
 
-            <p className="text-base leading-relaxed text-zinc-200 md:text-lg">
-              DreamShard is a{" "}
-              <span className="inline-flex items-center gap-1 text-white font-semibold">
-                &quot;2D-HD RPG&quot;
-              </span>{" "}
-              in pixel art style where dreams come true — sometimes at a cost.
-            </p>
+          <h1 className="text-4xl font-bold tracking-tight md:text-6xl ds-pixel">
+            DreamShard
+          </h1>
 
+          <p className="text-base leading-relaxed text-zinc-200 md:text-lg">
+            DreamShard is a{" "}
+            <span className="inline-flex items-center gap-1 text-white font-semibold">
+              &quot;2D-HD RPG&quot;
+            </span>{" "}
+            in pixel art style where dreams come true — sometimes at a cost.
+          </p>
+
+          <a
+            href="#what-is-2dhd"
+            className="mt-2 inline-flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 transition"
+          >
+            <span>↘</span>
+            <span className="underline underline-offset-2">What is a 2D-HD RPG?</span>
+          </a>
+
+          <p className="text-base leading-relaxed text-zinc-200 md:text-lg">
+            The game has 2 main gamemodes: an{" "}
+            <span className="text-white font-semibold">Arena mode</span> (challenges,
+            fights, hidden secrets) scheduled to release first, and a{" "}
+            <span className="text-white font-semibold">Story mode</span> in acts (with a
+            prologue), on highschoolers facing consequences of their materialized dreams.
+          </p>
+
+          <div className="flex flex-col gap-3 sm:flex-row">
             <a
-              href="#what-is-2dhd"
-              className="mt-2 inline-flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 transition"
+              href={LINKS.follow}
+              className="rounded-2xl bg-white px-5 py-3 text-center font-semibold text-zinc-950 hover:bg-zinc-100"
             >
-              <span>↘</span>
-              <span className="underline underline-offset-2">
-                What is a 2D-HD RPG?
-              </span>
+              Follow the development
             </a>
-
-            <p className="text-base leading-relawed text-zinc-200 md:text-lg">
-              The game has 2 main gamemodes: an <span className="text-white font-semibold">Arena mode</span> (challenges, fights, hidden secrets)
-              scheduled to release first, and a <span className="text-white font-semibold">Story mode</span> in acts (with a prologue),
-              on highschoolers facing consequences of their materialized dreams.
-            </p>
-
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <a
-                href={LINKS.follow}
-                className="rounded-2xl bg-white px-5 py-3 text-center font-semibold text-zinc-950 hover:bg-zinc-100"
-              >
-                Follow the development
-              </a>
-              <a
-                href="#modes"
-                className="rounded-2xl border border-white/15 bg-white/5 px-5 py-3 text-center font-semibold text-white hover:bg-white/10"
-              >
-                Gamemodes
-              </a>
-            </div>
+            <a
+              href="#modes"
+              className="rounded-2xl border border-white/15 bg-white/5 px-5 py-3 text-center font-semibold text-white hover:bg-white/10"
+            >
+              Gamemodes
+            </a>
           </div>
         </div>
-      </section>   
+      </section>  
 
       {/* Modes */}
       <section id="modes" className="mx-auto max-w-6xl px-4 py-14 md:py-20">
@@ -271,9 +278,10 @@ const GAMEPLAY_LOOP = [
               The Arena mode in DreamShard is a fast-paced, replayable experience built around a combat arena.
               Each run places the player inside an arena filled with successive waves of enemies. Between these waves, the player chooses how to grow stronger, shaping a unique build. 
               While upgrades are erased between runs, the player keeps progressing with unique perks that unlocks through multiple attempts.
-              A key element of this mode is character and builds diversity: all charcters are played differently with specific perks, upgrades and gameplay, dramatically changing how the arena is approached 
-              and how combat unfolds. This gamemode focuses on mastery, replayability, and discovery through gameplay, with hidden events and subtle narrative hints woven into the action.
             </p>
+            <ul className="mt-4 space-y-2 text-sm text-zinc-300">
+              {ARENA_POINTS.map((x) => <li key={x}>• {x}</li>)}
+            </ul>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/5 p-5 transition
@@ -314,58 +322,59 @@ const GAMEPLAY_LOOP = [
             </div>
           </div>
         </div>
-
-      {/* 2D-HD explaination */}
-      <section
-        id="what-is-2dhd"
-        className="mx-auto max-w-6xl px-4 py-12 md:py-16 scroll-mt-24"
-      >
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-10 backdrop-blur">
-          <h2 className="text-2xl md:text-3xl font-semibold text-white ds-pixel">
-            What is a 2D-HD RPG?
-          </h2>
-
-          <div className="mt-6 grid gap-8 md:grid-cols-2 md:items-center">
-            {/* Animated example (Octopath-like) */}
-            <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/40">
-              {/* ✅ Recommended: MP4/WebM loop for best performance */}
-              <video
-                className="h-full w-full object-cover"
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="metadata"
-                poster="/media/2dhd-poster.jpg"
-              >
-                <source src="/media/octopath-example.webm" type="video/webm" />
-                <source src="/media/octopath-example.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
-
-            {/* Explanation */}
-            <div className="space-y-4 text-zinc-200 leading-relaxed md:text-lg">
-              <p>
-                A <span className="text-white font-semibold">2D-HD RPG</span> blends{" "}
-                <span className="text-white font-semibold">2D pixel art characters</span>{" "}
-                with <span className="text-white font-semibold">3D environments</span>,
-                modern lighting, depth of field, and subtle post-processing.
-              </p>
-
-              <p>
-                A well-known example is{" "}
-                <span className="text-white font-semibold">Octopath Traveler</span>:
-                characters remain crisp 2D sprites, while the world is built in 3D with
-                rich lighting and depth — creating a “miniature diorama” feel without
-                changing the core 2D gameplay.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>   
-
       </section>
+
+        {/* 2D-HD explaination */}
+        <section
+          id="what-is-2dhd"
+          className="mx-auto max-w-6xl px-4 py-12 md:py-16 scroll-mt-24"
+        >
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-10 backdrop-blur">
+            <h2 className="text-2xl md:text-3xl font-semibold text-white ds-pixel">
+              What is a 2D-HD RPG?
+            </h2>
+
+            <div className="md:col-span-2">
+              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 aspect-1200/630">
+                <Image
+                  src="/media/octopath-example.jpg"
+                  alt="2D-HD RPG visual style example"
+                  fill
+                  className="object-contain"
+                  sizes="(min-width: 1024px) 66vw, (min-width: 768px) 66vw, 100vw"
+                />
+              </div>
+            </div>
+
+              {/* Explanation */}
+              <div className="space-y-4 text-zinc-200 leading-relaxed md:text-lg">
+                <p>
+                  A <span className="text-white font-semibold">2D-HD RPG</span> blends{" "}
+                  <span className="text-white font-semibold">2D pixel art characters</span>{" "}
+                  with <span className="text-white font-semibold">3D environments</span>,
+                  modern lighting, depth of field, and subtle post-processing.
+                </p>
+
+                <p>
+                  A well-known example is{" "}
+                  <span className="text-white font-semibold">Octopath Traveler</span>:
+                  characters remain crisp 2D sprites, while the world is built in 3D with
+                  rich lighting and depth — creating a “miniature diorama” feel without
+                  changing the core 2D gameplay.
+                </p>
+
+                <a
+                  href="https://en.wikipedia.org/wiki/HD-2D#:~:text=HD%2D2D%20or%20HD2D%20is,with%20fully%20three%2Ddimensional%20environments."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-amber-400 hover:text-amber-300 transition"
+                >
+                  <span>More info</span>
+                  <span aria-hidden>↗</span>
+                </a>
+              </div>
+            </div>
+        </section>   
 
       {/* Gameplay loop */}
       <section id="gameplay" className="mx-auto max-w-6xl px-4 py-14 md:py-20">
@@ -488,20 +497,19 @@ const GAMEPLAY_LOOP = [
       </section>
 
       {/* Footer */}
-      <footer className="mx-auto max-w-6xl px-4 pb-10">
+      <footer className="mx-auto max-w-6xl px-4 pb-16">
         <div className="flex flex-col items-start justify-between gap-4 border-t border-white/10 pt-6 text-sm text-zinc-400 md:flex-row md:items-center">
           <p>© {new Date().getFullYear()} DreamShard</p>
           <div className="flex gap-4">
             <a className="hover:text-white" href="#modes">Modes</a>
             <a className="hover:text-white" href="#roadmap">Roadmap</a>
             <button
-  type="button"
-  onClick={() => setIsContactOpen(true)}
-  className="hover:text-white"
->
-  Contact
-</button>
-
+            type="button"
+            onClick={() => setIsContactOpen(true)}
+            className="hover:text-white"
+          >
+            Contact
+          </button>
           </div>
         </div>
       </footer>
