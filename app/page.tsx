@@ -37,7 +37,6 @@ function LucidityChaosMeter() {
   }`}
 />
 
-
         {/* Remplissage depuis le centre */}
         <div
           className="absolute left-1/2 top-0 h-full w-1/2 origin-left ds-meter-fill ds-meter-fill--right"
@@ -92,21 +91,6 @@ useEffect(() => {
     if (timeoutId) clearTimeout(timeoutId);
   };
 }, []);
-
-  const FEATURES = [
-    {
-      title: "Role Play Game (RPG), made in pixel art",
-      desc: "A nocturnal and mysterious artistic direction, with dreams that change themes (dreamlike, fantasy, sci-fi, etc..",
-    },
-    {
-      title: "Two main game modes",
-      desc: "Arena mode (available at launch) + Story mode (will be released gradually after the game's release).",
-    },
-    {
-      title: "Complex and vast",
-      desc: "Both game modes are significant and offer a wide variety of gameplay possibilities.",
-    },
-  ];
 
   const STORY_POINTS = [
     "Complex plot in several acts",
@@ -218,7 +202,7 @@ const GAMEPLAY_LOOP = [
         </div>
 
         <div className="mx-auto max-w-6xl px-4 py-16 md:py-24">
-          <div className="max-w-2xl space-y-6">
+          <div className="space-y-6 max-w-5xl">
             <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-zinc-200">
               <span className="h-2 w-2 rounded-full bg-amber-400" />
               First phase of development — images & demo to come
@@ -229,9 +213,23 @@ const GAMEPLAY_LOOP = [
             </h1>
 
             <p className="text-base leading-relaxed text-zinc-200 md:text-lg">
-              DreamShard is a <span className="text-white font-semibold">2D pixel art RPG</span> where
-              <span className="text-white font-semibold"> dreams come true</span>.
-              </p>
+              DreamShard is a{" "}
+              <span className="inline-flex items-center gap-1 text-white font-semibold">
+                &quot;2D-HD RPG&quot;
+              </span>{" "}
+              in pixel art style where dreams come true — sometimes at a cost.
+            </p>
+
+            <a
+              href="#what-is-2dhd"
+              className="mt-2 inline-flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 transition"
+            >
+              <span>↘</span>
+              <span className="underline underline-offset-2">
+                What is a 2D-HD RPG?
+              </span>
+            </a>
+
             <p className="text-base leading-relawed text-zinc-200 md:text-lg">
               The game has 2 main gamemodes: an <span className="text-white font-semibold">Arena mode</span> (challenges, fights, hidden secrets)
               scheduled to release first, and a <span className="text-white font-semibold">Story mode</span> in acts (with a prologue),
@@ -254,39 +252,7 @@ const GAMEPLAY_LOOP = [
             </div>
           </div>
         </div>
-      </section>
-
-      {/* About / Features */}
-      <section id="about" className="mx-auto max-w-6xl px-4 py-14 md:py-20">
-        <div className="grid gap-10 md:grid-cols-2 md:items-start">
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold md:text-3xl ds-pixel">
-              What&apos;s DreamShard?
-            </h2>
-            <p className="text-zinc-300 leading-relaxed">
-              It’s an RPG where the universe changes depending on dreams and nightmares : sometimes beautiful, often brutal,
-              a lot of settings are to be expected. The player progesses through fights, challenges, revelations, with a rather dark ambiance.
-            </p>
-
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-              <p className="text-sm text-zinc-200">
-                ✦ The projet aims <span className="text-white font-semibold">at making you feel</span> the strangeness of a dream being real and all of it’s abuses.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid gap-4">
-            {FEATURES.map((f) => (
-              <div key={f.title} className="rounded-2xl border border-white/10 bg-white/5 p-5 transition
-           hover:-translate-y-1 hover:bg-white/[0.07] hover:border-white/20
-           hover:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_20px_60px_rgba(0,0,0,0.6)]">
-                <h3 className="font-semibold">{f.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-zinc-300">{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      </section>   
 
       {/* Modes */}
       <section id="modes" className="mx-auto max-w-6xl px-4 py-14 md:py-20">
@@ -348,6 +314,57 @@ const GAMEPLAY_LOOP = [
             </div>
           </div>
         </div>
+
+      {/* 2D-HD explaination */}
+      <section
+        id="what-is-2dhd"
+        className="mx-auto max-w-6xl px-4 py-12 md:py-16 scroll-mt-24"
+      >
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-10 backdrop-blur">
+          <h2 className="text-2xl md:text-3xl font-semibold text-white ds-pixel">
+            What is a 2D-HD RPG?
+          </h2>
+
+          <div className="mt-6 grid gap-8 md:grid-cols-2 md:items-center">
+            {/* Animated example (Octopath-like) */}
+            <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/40">
+              {/* ✅ Recommended: MP4/WebM loop for best performance */}
+              <video
+                className="h-full w-full object-cover"
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="metadata"
+                poster="/media/2dhd-poster.jpg"
+              >
+                <source src="/media/octopath-example.webm" type="video/webm" />
+                <source src="/media/octopath-example.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+
+            {/* Explanation */}
+            <div className="space-y-4 text-zinc-200 leading-relaxed md:text-lg">
+              <p>
+                A <span className="text-white font-semibold">2D-HD RPG</span> blends{" "}
+                <span className="text-white font-semibold">2D pixel art characters</span>{" "}
+                with <span className="text-white font-semibold">3D environments</span>,
+                modern lighting, depth of field, and subtle post-processing.
+              </p>
+
+              <p>
+                A well-known example is{" "}
+                <span className="text-white font-semibold">Octopath Traveler</span>:
+                characters remain crisp 2D sprites, while the world is built in 3D with
+                rich lighting and depth — creating a “miniature diorama” feel without
+                changing the core 2D gameplay.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>   
+
       </section>
 
       {/* Gameplay loop */}
