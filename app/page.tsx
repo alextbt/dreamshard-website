@@ -41,6 +41,34 @@ function Reveal({
   );
 }
 
+function EntryGate({ onEnter }: { onEnter: () => void }) {
+  const [leaving, setLeaving] = useState(false);
+  const [hit, setHit] = useState(false);
+
+  const handleClick = () => {
+    if (leaving) return;
+    setHit(true);
+    setTimeout(() => setLeaving(true), 280);
+    setTimeout(onEnter, 900);
+  };
+
+  return (
+    <div className={`ds-gate ${leaving ? "ds-gate--leaving" : ""}`}>
+      <button
+        type="button"
+        onClick={handleClick}
+        aria-label="Enter the dream"
+        className="ds-shard-button"
+      >
+        <span className={`ds-shard ${hit ? "ds-shard--hit" : ""}`} />
+        <span className={`ds-shard-flash ${hit ? "ds-shard-flash--on" : ""}`} />
+      </button>
+      <p className="ds-eyebrow text-cyan-300/80">DreamShard</p>
+      <p className="ds-gate-hint">Touch the shard to wake the dream</p>
+    </div>
+  );
+}
+
 function LucidityChaosMeter() {
   const [v, setV] = useState(0); // -1 (Chaos) ... 0 ... +1 (Lucidity)
 
@@ -121,11 +149,18 @@ export default function Home() {
 
   const TITLE = "DreamShard";
 
+  const ACCENT_BORDERS = [
+    "border-l-cyan-400/60",
+    "border-l-amber-400/60",
+    "border-l-violet-400/60",
+  ];
+
 const [glitchOn, setGlitchOn] = useState(false);
 const [titleGlitch, setTitleGlitch] = useState(false);
 const [introOn, setIntroOn] = useState(false);
 const [scrolled, setScrolled] = useState(false);
 const [mobileNavOpen, setMobileNavOpen] = useState(false);
+const [gateOpen, setGateOpen] = useState(true);
 
 useEffect(() => {
   const EVERY_MS = 10000;   // toutes les 10 secondes
@@ -146,8 +181,9 @@ useEffect(() => {
   };
 }, []);
 
-// Page intro: progressive title/content reveal on first load
+// Page intro: progressive title/content reveal, once the entry gate has been opened
 useEffect(() => {
+  if (gateOpen) return;
   const introTimer = setTimeout(() => setIntroOn(true), 80);
   const glitchOnTimer = setTimeout(() => setTitleGlitch(true), 80);
   const glitchOffTimer = setTimeout(() => setTitleGlitch(false), 80 + 550);
@@ -156,7 +192,15 @@ useEffect(() => {
     clearTimeout(glitchOnTimer);
     clearTimeout(glitchOffTimer);
   };
-}, []);
+}, [gateOpen]);
+
+// Lock page scroll while the entry gate is up
+useEffect(() => {
+  document.documentElement.style.overflow = gateOpen ? "hidden" : "";
+  return () => {
+    document.documentElement.style.overflow = "";
+  };
+}, [gateOpen]);
 
 // Header gets denser once the page has scrolled past the hero badge
 useEffect(() => {
@@ -240,6 +284,7 @@ const GAMEPLAY_LOOP = [
 
   return (
     <main className="relative min-h-screen">
+      {gateOpen && <EntryGate onEnter={() => setGateOpen(false)} />}
 
       {/* Header */}
       <header
@@ -358,6 +403,15 @@ const GAMEPLAY_LOOP = [
             First phase of development — images & demo to come
           </p>
 
+          <p
+            className={`ds-reveal ds-eyebrow text-amber-300/80 ${
+              introOn ? "ds-reveal--visible" : ""
+            }`}
+            style={{ transitionDelay: "60ms" }}
+          >
+            A 2D-HD pixel art RPG
+          </p>
+
           <h1
             className={`ds-glitch whitespace-nowrap text-4xl font-bold tracking-tight md:text-6xl ds-pixel ${
               titleGlitch ? "ds-glitch--on" : ""
@@ -413,6 +467,11 @@ const GAMEPLAY_LOOP = [
           </p>
 
           <div
+            className={`ds-reveal ds-divider ${introOn ? "ds-reveal--visible" : ""}`}
+            style={{ transitionDelay: "720ms" }}
+          />
+
+          <div
             className={`ds-reveal flex flex-col gap-3 sm:flex-row ${
               introOn ? "ds-reveal--visible" : ""
             }`}
@@ -437,14 +496,15 @@ const GAMEPLAY_LOOP = [
       {/* Modes */}
       <section id="modes" className="mx-auto max-w-6xl px-4 py-14 md:py-20">
         <Reveal>
-          <h2 className="text-2xl font-semibold md:text-3xl ds-pixel">Two gamemodes</h2>
+          <p className="ds-eyebrow text-cyan-300/80">Two paths</p>
+          <h2 className="mt-1 text-2xl font-semibold md:text-3xl ds-pixel">Two gamemodes</h2>
           <p className="mt-2 text-zinc-300 max-w-3xl">
             DreamShard has 2 gamemodes: an arena roguelike and a story driven adventure.
           </p>
         </Reveal>
 
         <div className="mt-8 grid gap-4 md:grid-cols-2">
-          <Reveal delay={80} className="rounded-2xl border border-white/10 bg-white/5 p-5 transition
+          <Reveal delay={80} className="rounded-2xl border-y border-r border-white/10 border-l-4 border-l-amber-400/60 bg-white/5 p-5 transition
            hover:-translate-y-1 hover:bg-amber-300/[0.07] hover:border-amber-500/20
            hover:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_20px_60px_rgba(0,0,0,0.6)]">
             <p className="text-xs text-zinc-300">Expected for mid-2026</p>
@@ -459,7 +519,7 @@ const GAMEPLAY_LOOP = [
             </ul>
           </Reveal>
 
-          <Reveal delay={160} className="rounded-2xl border border-white/10 bg-white/5 p-5 transition
+          <Reveal delay={160} className="rounded-2xl border-y border-r border-white/10 border-l-4 border-l-cyan-400/60 bg-white/5 p-5 transition
            hover:-translate-y-1 hover:bg-cyan-300/[0.07] hover:border-cyan-500/20
            hover:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_20px_60px_rgba(0,0,0,0.6)]">
             <p className="text-xs text-zinc-300">Expected for late 2026</p>
@@ -481,7 +541,8 @@ const GAMEPLAY_LOOP = [
         <Reveal className="rounded-3xl border border-white/10 bg-white/5 p-4 md:p-6">
           <div className="flex items-end justify-between gap-4 pb-4">
             <div>
-              <h2 className="text-xl font-semibold md:text-2xl ds-pixel">Visual overview</h2>
+              <p className="ds-eyebrow text-amber-300/80">Media preview</p>
+              <h2 className="mt-1 text-xl font-semibold md:text-2xl ds-pixel">Visual overview</h2>
               <p className="text-sm text-zinc-300">
                 Trailer & gameplay will be displayed here when available. For now, enjoy the eternal darkness :)
               </p>
@@ -505,7 +566,8 @@ const GAMEPLAY_LOOP = [
           className="mx-auto max-w-6xl px-4 py-12 md:py-16 scroll-mt-24"
         >
           <Reveal className="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-10 backdrop-blur">
-            <h2 className="text-2xl md:text-3xl font-semibold text-white ds-pixel">
+            <p className="ds-eyebrow text-cyan-300/80">Art direction</p>
+            <h2 className="mt-1 text-2xl md:text-3xl font-semibold text-white ds-pixel">
               What is a 2D-HD RPG?
             </h2>
 
@@ -556,7 +618,8 @@ const GAMEPLAY_LOOP = [
       {/* Gameplay loop */}
       <section id="gameplay" className="mx-auto max-w-6xl px-4 py-14 md:py-20">
         <Reveal>
-          <h2 className="text-2xl font-semibold md:text-3xl ds-pixel">Gameplay loop</h2>
+          <p className="ds-eyebrow text-amber-300/80">How to play</p>
+          <h2 className="mt-1 text-2xl font-semibold md:text-3xl ds-pixel">Gameplay loop</h2>
           <p className="text-zinc-300">How do you play DreamShard?</p>
         </Reveal>
 
@@ -565,9 +628,9 @@ const GAMEPLAY_LOOP = [
     <Reveal
       key={s.title}
       delay={idx * 80}
-      className="rounded-2xl border border-white/10 bg-white/5 p-5 transition
+      className={`rounded-2xl border-y border-r border-white/10 border-l-4 ${ACCENT_BORDERS[idx % ACCENT_BORDERS.length]} bg-white/5 p-5 transition
            hover:-translate-y-1 hover:bg-cyan-400/[0.06] hover:border-cyan-400/20
-           hover:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_20px_60px_rgba(0,0,0,0.6)]"
+           hover:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_20px_60px_rgba(0,0,0,0.6)]`}
     >
       <div className="flex items-start gap-3">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-sm font-semibold">
@@ -609,7 +672,8 @@ const GAMEPLAY_LOOP = [
       {/* Media placeholders */}
       <section id="media" className="mx-auto max-w-6xl px-4 pb-14 md:pb-20">
         <Reveal>
-          <h2 className="text-2xl font-semibold md:text-3xl ds-pixel">Medias</h2>
+          <p className="ds-eyebrow text-violet-300/80">Screenshots &amp; clips</p>
+          <h2 className="mt-1 text-2xl font-semibold md:text-3xl ds-pixel">Medias</h2>
           <p className="text-zinc-300">
             No images of the game ? Why ?
           </p>
@@ -634,14 +698,19 @@ const GAMEPLAY_LOOP = [
       {/* Roadmap */}
       <section id="roadmap" className="mx-auto max-w-6xl px-4 py-14 md:py-20">
         <Reveal className="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
-          <h2 className="text-2xl font-semibold md:text-3xl ds-pixel">Roadmap</h2>
+          <p className="ds-eyebrow text-cyan-300/80">Timeline</p>
+          <h2 className="mt-1 text-2xl font-semibold md:text-3xl ds-pixel">Roadmap</h2>
           <p className="mt-2 text-zinc-300">
             The development roadmap
           </p>
 
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {ROADMAP.map((r, idx) => (
-              <Reveal key={r.title} delay={idx * 60} className="rounded-2xl border border-white/10 bg-black/20 p-5">
+              <Reveal
+                key={r.title}
+                delay={idx * 60}
+                className={`rounded-2xl border-y border-r border-white/10 border-l-4 ${ACCENT_BORDERS[idx % ACCENT_BORDERS.length]} bg-black/20 p-5`}
+              >
                 <p className="text-sm text-zinc-300">{r.phase}</p>
                 <p className="mt-1 font-semibold">{r.title}</p>
                 <p className="mt-2 text-sm text-zinc-300">{r.desc}</p>
@@ -664,7 +733,8 @@ const GAMEPLAY_LOOP = [
       {/* FAQ */}
       <section id="faq" className="mx-auto max-w-6xl px-4 pb-14 md:pb-20">
         <Reveal>
-          <h2 className="text-2xl font-semibold md:text-3xl ds-pixel">FAQ</h2>
+          <p className="ds-eyebrow text-amber-300/80">Questions</p>
+          <h2 className="mt-1 text-2xl font-semibold md:text-3xl ds-pixel">FAQ</h2>
         </Reveal>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {FAQ.map((item, idx) => (

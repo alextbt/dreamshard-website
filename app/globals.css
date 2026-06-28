@@ -186,3 +186,119 @@
   }
 }
 
+/* Section eyebrows + dividers */
+.ds-eyebrow {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.ds-divider {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+/* Entry gate */
+.ds-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  background: #05050a;
+  transition: opacity 650ms ease;
+}
+
+.ds-gate--leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ds-shard-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2.5rem;
+  perspective: 600px;
+}
+
+.ds-shard {
+  display: block;
+  width: 88px;
+  height: 88px;
+  clip-path: polygon(50% 0%, 90% 35%, 74% 100%, 26% 100%, 10% 35%);
+  background: linear-gradient(160deg, rgba(94, 234, 212, 0.9), rgba(91, 42, 134, 0.85));
+  box-shadow: 0 0 40px rgba(94, 234, 212, 0.35), 0 0 80px rgba(91, 42, 134, 0.25);
+  transform-style: preserve-3d;
+  animation: ds-shard-spin 7s ease-in-out infinite, ds-shard-pulse 3s ease-in-out infinite;
+  transition: transform 400ms ease;
+}
+
+.ds-shard-button:hover .ds-shard {
+  animation-duration: 2.4s, 1.4s;
+}
+
+.ds-shard--hit {
+  animation: none !important;
+  transform: scale(1.4) rotateY(180deg);
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ds-shard-flash {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9), transparent 70%);
+  opacity: 0;
+}
+
+.ds-shard-flash--on {
+  animation: ds-shard-flash 600ms ease-out forwards;
+}
+
+.ds-gate-hint {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+@keyframes ds-shard-spin {
+  0%, 100% { transform: rotateY(0deg) rotateX(8deg); }
+  50% { transform: rotateY(180deg) rotateX(-8deg); }
+}
+
+@keyframes ds-shard-pulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.35); }
+}
+
+@keyframes ds-shard-flash {
+  0% { opacity: 0; transform: scale(0.6); }
+  40% { opacity: 1; transform: scale(1.8); }
+  100% { opacity: 0; transform: scale(2.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-shard {
+    animation: none;
+  }
+  .ds-gate,
+  .ds-shard--hit {
+    transition: none;
+  }
+}
+
