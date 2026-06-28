@@ -69,7 +69,6 @@ export default function Home() {
 
   const LINKS = {
     follow: "#roadmap",
-    contact: "mailto:frameperfectstudio.dev@gmail.com", // change si besoin
   };
 
 const [glitchOn, setGlitchOn] = useState(false);
@@ -100,7 +99,7 @@ const STORY_POINTS = [
   ];
 
 const ARENA_POINTS = [
-    "Builds and character diversity: charcters played differently, specific perks, upgrades, changing how the arena is approached.",
+    "Builds and character diversity: characters played differently, specific perks, upgrades, changing how the arena is approached.",
     "Focuses on mastery, replayability, and discovery through gameplay.",
     "Hidden events and subtle narrative are added into the arena... to escape?",
   ];
@@ -149,7 +148,7 @@ const GAMEPLAY_LOOP = [
     { phase: "End of 2025", title: "Pre-alpha phase", desc: "Foundations, prototypes, artistic direction, key systems." },
     { phase: "First semester of 2026", title: "Alpha", desc: "Roguelike mode base developed in terms of substance, staging, and gameplay." },
     { phase: "May / June 2026", title: "Beta - Expected release period", desc: "DreamShard will be available for the first time, with only its Arena mode in version 1.0 for now." },
-    { phase: "Second semester of 2026", title: "Pre-release development phase", desc: "Story mode developement period, planning to release the prologue of the game in late 2026." },
+    { phase: "Second semester of 2026", title: "Pre-release development phase", desc: "Story mode development period, planning to release the prologue of the game in late 2026." },
     { phase: "November 2026", title: "Pre-release demo", desc: "A demo for the prologue of DreamShard's story mode will be available. Depending on your feedback on this demo, act 1 will be developed, aiming at a early 2027 release." },
     { phase: "Christmas 2026", title: "DreamShard release date", desc: "For the first time, DreamShard will be fully available for both game modes, Arena and Story (Prologue only)." },
   ];
@@ -157,12 +156,12 @@ const GAMEPLAY_LOOP = [
   const FAQ = [
     { q: "When can we try out the game?", a: "Not until May 2026 at best. Follow the given roadmap to follow the progession of the game." },
     { q: "How much will DreamShard cost?", a: "For now, DreamShard should not be officially released considering the used sprites, animations and soundtracks that are not ours. If the game manages to become 100% original, it will probably be released on Steam for a maximum of €5-10." },
-    { q: "On which plateform can I play the game?", a: "Only on PC... and on any PC (given the pixel art graphics)." },
+    { q: "On which platform can I play the game?", a: "Only on PC... and on any PC (given the pixel art graphics)." },
     { q: "Isn't pixel art a bit odd for a game nowadays?", a: "Beyond the nostalgic aspect that pixel art can have, it is also a process still widely used by some independent developers. The game's appearance has no influence on its gameplay quality: my game will be perfectly playable, attractive, and smooth. You'd be surprised at what can be done with pixels..." },
     { q: "What's an RPG?", a: "RPG stands for Role Playing Game, meaning that you will play a specific character and that you will progress through the game by developing your character, both statistically and personally. DreamShard borrows heavily from the JRPG style, or Japanese RPG format, particularly in its turn-based gameplay. " },
     { q: "How is DreamShard played?", a: "You will explore and fight with your team against different enemies. The game is turn-based, during a fight, you prepare your actions, and execute them before/after the enemy. Then, it's the enemy's turn to attack, and the process begins again. Read the Gameplay loop part for more informations." },
     { q: "How long to beat DreamShard?", a: "In Arena mode, you can do series of 20-30 min runs, depending on how good you play. For story mode, for the prologue only, it's expected to last 5 to 10 hours to finish it. The full story mode (if all acts ever release), is expected to last as long as the prologue x6, so 30 hours minimum." },
-    { q: "Is DreamShard hard?", a: "Although I love challenging games, DreamShard can be finished easily considering the game gives other options if you want to avoid using the most timing-relient and harder game mechanics. However, to complete the Arena gamemode or to finish the Story at 100% completion, you will have to die and retry a lot."}
+    { q: "Is DreamShard hard?", a: "Although I love challenging games, DreamShard can be finished easily considering the game gives other options if you want to avoid using the most timing-reliant and harder game mechanics. However, to complete the Arena gamemode or to finish the Story at 100% completion, you will have to die and retry a lot."}
   ];
 
   return (
@@ -201,9 +200,9 @@ const GAMEPLAY_LOOP = [
 
     {/* Global background (gradient + soft glows) */}
     <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-      <div className="absolute inset-0 bg-linear-to-br from-black via-violet-950/35 to-black" />
-      <div className="absolute -top-40 left-1/2 h-175 w-175 -translate-x-1/2 rounded-full bg-violet-700/12 blur-[140px]" />
-      <div className="absolute -bottom-75 -right-50 h-150 w-150 rounded-full bg-fuchsia-700/10 blur-[160px]" />
+      <div className="absolute inset-0 bg-linear-to-br from-black via-cyan-950/25 to-black" />
+      <div className="absolute -top-40 left-1/2 h-175 w-175 -translate-x-1/2 rounded-full bg-cyan-500/14 blur-[140px]" />
+      <div className="absolute -bottom-75 -right-50 h-150 w-150 rounded-full bg-violet-700/10 blur-[160px]" />
     </div>
     
 
@@ -270,14 +269,14 @@ const GAMEPLAY_LOOP = [
 
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           <div className="rounded-2xl border border-white/10 bg-white/5 p-5 transition
-           hover:-translate-y-1 hover:bg-red-300/[0.07] hover:border-red-500/20
+           hover:-translate-y-1 hover:bg-amber-300/[0.07] hover:border-amber-500/20
            hover:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_20px_60px_rgba(0,0,0,0.6)]">
             <p className="text-xs text-zinc-300">Expected for mid-2026</p>
             <h3 className="mt-2 text-xl font-semibold">Roguelike mode — The Arena</h3>
             <p className="mt-3 text-sm leading-relaxed text-zinc-300">
               The Arena mode in DreamShard is a fast-paced, replayable experience built around a combat arena.
               Each run places the player inside an arena filled with successive waves of enemies. Between these waves, the player chooses how to grow stronger, shaping a unique build. 
-              While upgrades are erased between runs, the player keeps progressing with unique perks that unlocks through multiple attempts.
+              While upgrades are erased between runs, the player keeps progressing with unique perks that unlock through multiple attempts.
             </p>
             <ul className="mt-4 space-y-2 text-sm text-zinc-300">
               {ARENA_POINTS.map((x) => <li key={x}>• {x}</li>)}
@@ -285,7 +284,7 @@ const GAMEPLAY_LOOP = [
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/5 p-5 transition
-           hover:-translate-y-1 hover:bg-blue-300/[0.07] hover:border-blue-600/20
+           hover:-translate-y-1 hover:bg-cyan-300/[0.07] hover:border-cyan-500/20
            hover:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_20px_60px_rgba(0,0,0,0.6)]">
             <p className="text-xs text-zinc-300">Expected for late 2026</p>
             <h3 className="mt-2 text-xl font-semibold">Story mode — Prologue and acts</h3>
@@ -334,17 +333,18 @@ const GAMEPLAY_LOOP = [
               What is a 2D-HD RPG?
             </h2>
 
-            <div className="md:col-span-2">
-              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 aspect-1200/630">
-                <Image
-                  src="/media/octopath-example.jpg"
-                  alt="2D-HD RPG visual style example"
-                  fill
-                  className="object-contain"
-                  sizes="(min-width: 1024px) 66vw, (min-width: 768px) 66vw, 100vw"
-                />
+            <div className="mt-6 grid gap-6 md:grid-cols-3 md:items-center">
+              <div className="md:col-span-2">
+                <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 aspect-1200/630">
+                  <Image
+                    src="/media/octopath-example.jpg"
+                    alt="2D-HD RPG visual style example"
+                    fill
+                    className="object-contain"
+                    sizes="(min-width: 1024px) 66vw, (min-width: 768px) 66vw, 100vw"
+                  />
+                </div>
               </div>
-            </div>
 
               {/* Explanation */}
               <div className="space-y-4 text-zinc-200 leading-relaxed md:text-lg">
@@ -374,7 +374,8 @@ const GAMEPLAY_LOOP = [
                 </a>
               </div>
             </div>
-        </section>   
+          </div>
+        </section>
 
       {/* Gameplay loop */}
       <section id="gameplay" className="mx-auto max-w-6xl px-4 py-14 md:py-20">
@@ -388,7 +389,7 @@ const GAMEPLAY_LOOP = [
     <div
       key={s.title}
       className="rounded-2xl border border-white/10 bg-white/5 p-5 transition
-           hover:-translate-y-1 hover:bg-white/[0.07] hover:border-white/20
+           hover:-translate-y-1 hover:bg-cyan-400/[0.06] hover:border-cyan-400/20
            hover:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_20px_60px_rgba(0,0,0,0.6)]"
 
     >
