@@ -12,15 +12,6 @@
   letter-spacing: 0.02em;
 }
 
-/* Fond “grille” légère (pixel vibe) */
-.ds-grid {
-  background-image:
-    linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px);
-  background-size: 24px 24px;
-  background-position: center;
-}
-
 /* Scanlines très légères */
 .ds-scanlines {
   background: repeating-linear-gradient(
@@ -158,4 +149,40 @@
   );
 }
 
+/* Progressive reveal (intro stagger + scroll-triggered) */
+.ds-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1), transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ds-reveal--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hero title materializing letter by letter */
+.ds-letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.3em);
+  filter: blur(6px);
+  transition: opacity 500ms ease, transform 500ms ease, filter 500ms ease;
+}
+
+.ds-letter--visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-reveal,
+  .ds-letter {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}
 

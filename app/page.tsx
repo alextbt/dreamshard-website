@@ -1,6 +1,45 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+
+function Reveal({
+  children,
+  className = "",
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={`ds-reveal ${visible ? "ds-reveal--visible" : ""} ${className}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+}
 
 function LucidityChaosMeter() {
   const [v, setV] = useState(0); // -1 (Chaos) ... 0 ... +1 (Lucidity)
@@ -71,7 +110,22 @@ export default function Home() {
     follow: "#roadmap",
   };
 
+  const NAV_LINKS = [
+    { href: "#about", label: "About" },
+    { href: "#modes", label: "Modes" },
+    { href: "#gameplay", label: "Gameplay" },
+    { href: "#media", label: "Medias" },
+    { href: "#roadmap", label: "Roadmap" },
+    { href: "#faq", label: "FAQ" },
+  ];
+
+  const TITLE = "DreamShard";
+
 const [glitchOn, setGlitchOn] = useState(false);
+const [titleGlitch, setTitleGlitch] = useState(false);
+const [introOn, setIntroOn] = useState(false);
+const [scrolled, setScrolled] = useState(false);
+const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
 useEffect(() => {
   const EVERY_MS = 10000;   // toutes les 10 secondes
@@ -90,6 +144,26 @@ useEffect(() => {
     clearInterval(intervalId);
     if (timeoutId) clearTimeout(timeoutId);
   };
+}, []);
+
+// Page intro: progressive title/content reveal on first load
+useEffect(() => {
+  const introTimer = setTimeout(() => setIntroOn(true), 80);
+  const glitchOnTimer = setTimeout(() => setTitleGlitch(true), 80);
+  const glitchOffTimer = setTimeout(() => setTitleGlitch(false), 80 + 550);
+  return () => {
+    clearTimeout(introTimer);
+    clearTimeout(glitchOnTimer);
+    clearTimeout(glitchOffTimer);
+  };
+}, []);
+
+// Header gets denser once the page has scrolled past the hero badge
+useEffect(() => {
+  const onScroll = () => setScrolled(window.scrollY > 8);
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+  return () => window.removeEventListener("scroll", onScroll);
 }, []);
 
 const STORY_POINTS = [
@@ -168,33 +242,97 @@ const GAMEPLAY_LOOP = [
     <main className="relative min-h-screen">
 
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-zinc-950/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+      <header
+        className={`sticky top-0 z-50 border-b backdrop-blur transition-all duration-300 ${
+          scrolled
+            ? "border-white/10 bg-zinc-950/90"
+            : "border-transparent bg-zinc-950/50"
+        }`}
+      >
+        <div
+          className={`mx-auto flex max-w-6xl items-center justify-between px-4 transition-all duration-300 ${
+            scrolled ? "py-2.5" : "py-3.5"
+          }`}
+        >
           <div className="flex items-center gap-3">
             <span
-            className={`font-semibold tracking-wide ds-pixel ds-glitch ${glitchOn ? "ds-glitch--on" : ""}`}
-            data-text="DreamShard"
-          >
-            DreamShard
-          </span>
-
+              className={`font-semibold tracking-wide ds-pixel ds-glitch ${glitchOn ? "ds-glitch--on" : ""}`}
+              data-text="DreamShard"
+            >
+              DreamShard
+            </span>
           </div>
 
           <nav className="hidden items-center gap-6 text-sm text-zinc-200 md:flex">
-            <a className="hover:text-white" href="#about">About</a>
-            <a className="hover:text-white" href="#modes">Modes</a>
-            <a className="hover:text-white" href="#gameplay">Gameplay</a>
-            <a className="hover:text-white" href="#media">Medias</a>
-            <a className="hover:text-white" href="#roadmap">Roadmap</a>
-            <a className="hover:text-white" href="#faq">FAQ</a>
+            {NAV_LINKS.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                className="relative py-1 transition hover:text-white after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-cyan-400 after:transition-all after:duration-300 hover:after:w-full"
+              >
+                {l.label}
+              </a>
+            ))}
           </nav>
 
-          <a
-            href={LINKS.follow}
-            className="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-zinc-950 hover:bg-zinc-100"
-          >
-            Follow the development
-          </a>
+          <div className="flex items-center gap-3">
+            <a
+              href={LINKS.follow}
+              className="hidden rounded-xl bg-white px-3 py-2 text-sm font-semibold text-zinc-950 hover:bg-zinc-100 sm:inline-block"
+            >
+              Follow the development
+            </a>
+
+            <button
+              type="button"
+              onClick={() => setMobileNavOpen((v) => !v)}
+              aria-expanded={mobileNavOpen}
+              aria-label="Toggle menu"
+              className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 md:hidden"
+            >
+              <span
+                className={`absolute h-px w-5 bg-white transition-transform duration-300 ${
+                  mobileNavOpen ? "rotate-45" : "-translate-y-1.5"
+                }`}
+              />
+              <span
+                className={`absolute h-px w-5 bg-white transition-opacity duration-300 ${
+                  mobileNavOpen ? "opacity-0" : "opacity-100"
+                }`}
+              />
+              <span
+                className={`absolute h-px w-5 bg-white transition-transform duration-300 ${
+                  mobileNavOpen ? "-rotate-45" : "translate-y-1.5"
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+
+        <div
+          className={`overflow-hidden transition-all duration-300 md:hidden ${
+            mobileNavOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <nav className="flex flex-col gap-1 border-t border-white/10 px-4 py-3 text-sm text-zinc-200">
+            {NAV_LINKS.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                onClick={() => setMobileNavOpen(false)}
+                className="rounded-lg px-3 py-2 transition hover:bg-white/5 hover:text-white"
+              >
+                {l.label}
+              </a>
+            ))}
+            <a
+              href={LINKS.follow}
+              onClick={() => setMobileNavOpen(false)}
+              className="mt-2 rounded-xl bg-white px-3 py-2 text-center font-semibold text-zinc-950 hover:bg-zinc-100"
+            >
+              Follow the development
+            </a>
+          </nav>
         </div>
       </header>
 
@@ -208,18 +346,41 @@ const GAMEPLAY_LOOP = [
 
 
       {/* Hero (simple, no overlays) */}
-      <section className="mx-auto max-w-6xl px-4 py-16 md:py-24">
+      <section id="about" className="mx-auto max-w-6xl px-4 py-16 md:py-24">
         <div className="space-y-6 max-w-5xl">
-          <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-zinc-200">
+          <p
+            className={`ds-reveal inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-zinc-200 ${
+              introOn ? "ds-reveal--visible" : ""
+            }`}
+            style={{ transitionDelay: "0ms" }}
+          >
             <span className="h-2 w-2 rounded-full bg-amber-400" />
             First phase of development — images & demo to come
           </p>
 
-          <h1 className="text-4xl font-bold tracking-tight md:text-6xl ds-pixel">
-            DreamShard
+          <h1
+            className={`ds-glitch whitespace-nowrap text-4xl font-bold tracking-tight md:text-6xl ds-pixel ${
+              titleGlitch ? "ds-glitch--on" : ""
+            }`}
+            data-text={TITLE}
+          >
+            {TITLE.split("").map((ch, i) => (
+              <span
+                key={i}
+                className={`ds-letter ${introOn ? "ds-letter--visible" : ""}`}
+                style={{ transitionDelay: `${120 + i * 35}ms` }}
+              >
+                {ch}
+              </span>
+            ))}
           </h1>
 
-          <p className="text-base leading-relaxed text-zinc-200 md:text-lg">
+          <p
+            className={`ds-reveal text-base leading-relaxed text-zinc-200 md:text-lg ${
+              introOn ? "ds-reveal--visible" : ""
+            }`}
+            style={{ transitionDelay: "520ms" }}
+          >
             DreamShard is a{" "}
             <span className="inline-flex items-center gap-1 text-white font-semibold">
               &quot;2D-HD RPG&quot;
@@ -229,13 +390,21 @@ const GAMEPLAY_LOOP = [
 
           <a
             href="#what-is-2dhd"
-            className="mt-2 inline-flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 transition"
+            className={`ds-reveal mt-2 inline-flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 transition ${
+              introOn ? "ds-reveal--visible" : ""
+            }`}
+            style={{ transitionDelay: "600ms" }}
           >
             <span>↘</span>
             <span className="underline underline-offset-2">What is a 2D-HD RPG?</span>
           </a>
 
-          <p className="text-base leading-relaxed text-zinc-200 md:text-lg">
+          <p
+            className={`ds-reveal text-base leading-relaxed text-zinc-200 md:text-lg ${
+              introOn ? "ds-reveal--visible" : ""
+            }`}
+            style={{ transitionDelay: "680ms" }}
+          >
             The game has 2 main gamemodes: an{" "}
             <span className="text-white font-semibold">Arena mode</span> (challenges,
             fights, hidden secrets) scheduled to release first, and a{" "}
@@ -243,7 +412,12 @@ const GAMEPLAY_LOOP = [
             prologue), on highschoolers facing consequences of their materialized dreams.
           </p>
 
-          <div className="flex flex-col gap-3 sm:flex-row">
+          <div
+            className={`ds-reveal flex flex-col gap-3 sm:flex-row ${
+              introOn ? "ds-reveal--visible" : ""
+            }`}
+            style={{ transitionDelay: "760ms" }}
+          >
             <a
               href={LINKS.follow}
               className="rounded-2xl bg-white px-5 py-3 text-center font-semibold text-zinc-950 hover:bg-zinc-100"
@@ -258,51 +432,53 @@ const GAMEPLAY_LOOP = [
             </a>
           </div>
         </div>
-      </section>  
+      </section>
 
       {/* Modes */}
       <section id="modes" className="mx-auto max-w-6xl px-4 py-14 md:py-20">
-        <h2 className="text-2xl font-semibold md:text-3xl ds-pixel">Two gamemodes</h2>
-        <p className="mt-2 text-zinc-300 max-w-3xl">
-          DreamShard has 2 gamemodes: an arena roguelike and a story driven adventure.
-        </p>
+        <Reveal>
+          <h2 className="text-2xl font-semibold md:text-3xl ds-pixel">Two gamemodes</h2>
+          <p className="mt-2 text-zinc-300 max-w-3xl">
+            DreamShard has 2 gamemodes: an arena roguelike and a story driven adventure.
+          </p>
+        </Reveal>
 
         <div className="mt-8 grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-5 transition
+          <Reveal delay={80} className="rounded-2xl border border-white/10 bg-white/5 p-5 transition
            hover:-translate-y-1 hover:bg-amber-300/[0.07] hover:border-amber-500/20
            hover:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_20px_60px_rgba(0,0,0,0.6)]">
             <p className="text-xs text-zinc-300">Expected for mid-2026</p>
             <h3 className="mt-2 text-xl font-semibold">Roguelike mode — The Arena</h3>
             <p className="mt-3 text-sm leading-relaxed text-zinc-300">
               The Arena mode in DreamShard is a fast-paced, replayable experience built around a combat arena.
-              Each run places the player inside an arena filled with successive waves of enemies. Between these waves, the player chooses how to grow stronger, shaping a unique build. 
+              Each run places the player inside an arena filled with successive waves of enemies. Between these waves, the player chooses how to grow stronger, shaping a unique build.
               While upgrades are erased between runs, the player keeps progressing with unique perks that unlock through multiple attempts.
             </p>
             <ul className="mt-4 space-y-2 text-sm text-zinc-300">
               {ARENA_POINTS.map((x) => <li key={x}>• {x}</li>)}
             </ul>
-          </div>
+          </Reveal>
 
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-5 transition
+          <Reveal delay={160} className="rounded-2xl border border-white/10 bg-white/5 p-5 transition
            hover:-translate-y-1 hover:bg-cyan-300/[0.07] hover:border-cyan-500/20
            hover:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_20px_60px_rgba(0,0,0,0.6)]">
             <p className="text-xs text-zinc-300">Expected for late 2026</p>
             <h3 className="mt-2 text-xl font-semibold">Story mode — Prologue and acts</h3>
             <p className="mt-3 text-sm leading-relaxed text-zinc-300">
-              In contrast, the Story mode of DreamShard is a structured, narrative-driven experience. It follows a set cast of characters through a multi-act storyline, where progression is persistent and 
-              choices carry long-term consequences. While the Arena mode is about surviving and adapting within a single run, the Story mode is about understanding the world, the characters, and the 
+              In contrast, the Story mode of DreamShard is a structured, narrative-driven experience. It follows a set cast of characters through a multi-act storyline, where progression is persistent and
+              choices carry long-term consequences. While the Arena mode is about surviving and adapting within a single run, the Story mode is about understanding the world, the characters, and the
               meaning behind the dreams that shape it.
             </p>
             <ul className="mt-4 space-y-2 text-sm text-zinc-300">
               {STORY_POINTS.map((x) => <li key={x}>• {x}</li>)}
             </ul>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Visual preview (no trailer yet) */}
       <section id="preview" className="mx-auto max-w-6xl px-4 pb-14 md:pb-20">
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-4 md:p-6">
+        <Reveal className="rounded-3xl border border-white/10 bg-white/5 p-4 md:p-6">
           <div className="flex items-end justify-between gap-4 pb-4">
             <div>
               <h2 className="text-xl font-semibold md:text-2xl ds-pixel">Visual overview</h2>
@@ -320,7 +496,7 @@ const GAMEPLAY_LOOP = [
               Trailer soon — waiting for the almighty trailer of DreamShard.
             </div>
           </div>
-        </div>
+        </Reveal>
       </section>
 
         {/* 2D-HD explaination */}
@@ -328,7 +504,7 @@ const GAMEPLAY_LOOP = [
           id="what-is-2dhd"
           className="mx-auto max-w-6xl px-4 py-12 md:py-16 scroll-mt-24"
         >
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-10 backdrop-blur">
+          <Reveal className="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-10 backdrop-blur">
             <h2 className="text-2xl md:text-3xl font-semibold text-white ds-pixel">
               What is a 2D-HD RPG?
             </h2>
@@ -374,24 +550,24 @@ const GAMEPLAY_LOOP = [
                 </a>
               </div>
             </div>
-          </div>
+          </Reveal>
         </section>
 
       {/* Gameplay loop */}
       <section id="gameplay" className="mx-auto max-w-6xl px-4 py-14 md:py-20">
-        <div className="space-y-2">
+        <Reveal>
           <h2 className="text-2xl font-semibold md:text-3xl ds-pixel">Gameplay loop</h2>
           <p className="text-zinc-300">How do you play DreamShard?</p>
-        </div>
+        </Reveal>
 
 <div className="mt-8 grid gap-4 md:grid-cols-2">
   {GAMEPLAY_LOOP.map((s, idx) => (
-    <div
+    <Reveal
       key={s.title}
+      delay={idx * 80}
       className="rounded-2xl border border-white/10 bg-white/5 p-5 transition
            hover:-translate-y-1 hover:bg-cyan-400/[0.06] hover:border-cyan-400/20
            hover:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_20px_60px_rgba(0,0,0,0.6)]"
-
     >
       <div className="flex items-start gap-3">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-sm font-semibold">
@@ -425,50 +601,51 @@ const GAMEPLAY_LOOP = [
         </div>
       </div>
       {s.title.startsWith("Battle — Lucidity") && <LucidityChaosMeter />}
-    </div>
+    </Reveal>
   ))}
 </div>
       </section>
 
       {/* Media placeholders */}
       <section id="media" className="mx-auto max-w-6xl px-4 pb-14 md:pb-20">
-        <div className="space-y-2">
+        <Reveal>
           <h2 className="text-2xl font-semibold md:text-3xl ds-pixel">Medias</h2>
           <p className="text-zinc-300">
             No images of the game ? Why ?
           </p>
-        </div>
+        </Reveal>
 
         <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
-          {["Screenshot 1", "Screenshot 2", "GIF 1", "Key art"].map((label) => (
-            <div
+          {["Screenshot 1", "Screenshot 2", "GIF 1", "Key art"].map((label, idx) => (
+            <Reveal
               key={label}
+              delay={idx * 80}
               className="relative aspect-4/3 overflow-hidden rounded-2xl border border-white/10 bg-white/5"
             >
               <div className="absolute inset-0 ds-scanlines opacity-40" />
               <div className="absolute inset-0 flex items-center justify-center p-3 text-center text-xs text-zinc-300">
                 {label} — soon
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
       </section>
 
       {/* Roadmap */}
       <section id="roadmap" className="mx-auto max-w-6xl px-4 py-14 md:py-20">
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+        <Reveal className="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
           <h2 className="text-2xl font-semibold md:text-3xl ds-pixel">Roadmap</h2>
           <p className="mt-2 text-zinc-300">
             The development roadmap
           </p>
 
           <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {ROADMAP.map((r) => (
-              <div key={r.title} className="rounded-2xl border border-white/10 bg-black/20 p-5">
+            {ROADMAP.map((r, idx) => (
+              <Reveal key={r.title} delay={idx * 60} className="rounded-2xl border border-white/10 bg-black/20 p-5">
                 <p className="text-sm text-zinc-300">{r.phase}</p>
                 <p className="mt-1 font-semibold">{r.title}</p>
                 <p className="mt-2 text-sm text-zinc-300">{r.desc}</p>
-              </div>
+              </Reveal>
             ))}
           </div>
 
@@ -481,18 +658,20 @@ const GAMEPLAY_LOOP = [
               Contact me !
             </button>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* FAQ */}
       <section id="faq" className="mx-auto max-w-6xl px-4 pb-14 md:pb-20">
-        <h2 className="text-2xl font-semibold md:text-3xl ds-pixel">FAQ</h2>
+        <Reveal>
+          <h2 className="text-2xl font-semibold md:text-3xl ds-pixel">FAQ</h2>
+        </Reveal>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
-          {FAQ.map((item) => (
-            <div key={item.q} className="rounded-2xl border border-white/10 bg-white/5 p-5">
+          {FAQ.map((item, idx) => (
+            <Reveal key={item.q} delay={(idx % 2) * 80} className="rounded-2xl border border-white/10 bg-white/5 p-5">
               <p className="font-semibold">{item.q}</p>
               <p className="mt-2 text-sm leading-relaxed text-zinc-300">{item.a}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </section>
