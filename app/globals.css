@@ -220,7 +220,7 @@
   pointer-events: none;
 }
 
-.ds-shard-button {
+.ds-crystal-button {
   position: relative;
   display: flex;
   align-items: center;
@@ -228,30 +228,52 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 2.5rem;
-  perspective: 600px;
+  padding: 3rem;
+  perspective: 700px;
+  filter: drop-shadow(0 0 26px rgba(94, 234, 212, 0.35)) drop-shadow(0 0 50px rgba(91, 42, 134, 0.3));
 }
 
-.ds-shard {
-  display: block;
-  width: 88px;
-  height: 88px;
-  clip-path: polygon(50% 0%, 90% 35%, 74% 100%, 26% 100%, 10% 35%);
-  background: linear-gradient(160deg, rgba(94, 234, 212, 0.9), rgba(91, 42, 134, 0.85));
-  box-shadow: 0 0 40px rgba(94, 234, 212, 0.35), 0 0 80px rgba(91, 42, 134, 0.25);
+.ds-crystal-spin {
+  position: relative;
+  width: 0;
+  height: 0;
   transform-style: preserve-3d;
-  animation: ds-shard-spin 7s ease-in-out infinite, ds-shard-pulse 3s ease-in-out infinite;
-  transition: transform 400ms ease;
+  animation: ds-crystal-spin 9s linear infinite, ds-crystal-pulse 3s ease-in-out infinite;
 }
 
-.ds-shard-button:hover .ds-shard {
-  animation-duration: 2.4s, 1.4s;
+.ds-crystal-button:hover .ds-crystal-spin {
+  animation-duration: 3s, 1.4s;
 }
 
-.ds-shard--hit {
-  animation: none !important;
-  transform: scale(1.4) rotateY(180deg);
-  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+.ds-crystal-button--hit .ds-crystal-spin {
+  animation: ds-crystal-hit 650ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.ds-facet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  backface-visibility: hidden;
+}
+
+.ds-facet--top {
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.ds-facet--bottom {
+  clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+}
+
+.ds-facet--0 {
+  background: linear-gradient(160deg, rgba(94, 234, 212, 0.95), rgba(45, 140, 135, 0.75));
+}
+
+.ds-facet--1 {
+  background: linear-gradient(160deg, rgba(125, 211, 252, 0.9), rgba(91, 42, 134, 0.85));
+}
+
+.ds-facet--2 {
+  background: linear-gradient(160deg, rgba(167, 139, 250, 0.92), rgba(91, 42, 134, 0.95));
 }
 
 .ds-shard-flash {
@@ -276,14 +298,19 @@
   color: rgba(255, 255, 255, 0.45);
 }
 
-@keyframes ds-shard-spin {
-  0%, 100% { transform: rotateY(0deg) rotateX(8deg); }
-  50% { transform: rotateY(180deg) rotateX(-8deg); }
+@keyframes ds-crystal-spin {
+  0% { transform: rotateY(0deg) rotateX(12deg); }
+  100% { transform: rotateY(360deg) rotateX(12deg); }
 }
 
-@keyframes ds-shard-pulse {
+@keyframes ds-crystal-pulse {
   0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.35); }
+  50% { filter: brightness(1.3); }
+}
+
+@keyframes ds-crystal-hit {
+  0% { transform: rotateY(0deg) rotateX(12deg) scale(1); }
+  100% { transform: rotateY(220deg) rotateX(12deg) scale(1.6); }
 }
 
 @keyframes ds-shard-flash {
@@ -293,11 +320,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ds-shard {
+  .ds-crystal-spin {
     animation: none;
   }
-  .ds-gate,
-  .ds-shard--hit {
+  .ds-gate {
     transition: none;
   }
 }

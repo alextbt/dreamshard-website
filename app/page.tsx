@@ -41,6 +41,47 @@ function Reveal({
   );
 }
 
+// A faceted gem built from real 3D triangle planes (two stacked pyramids),
+// so rotating it actually reveals different facets instead of foreshortening
+// a single flat shape.
+function Crystal() {
+  const sides = 6;
+  const radius = 42;
+  const height = 50;
+  const inradius = radius * Math.cos(Math.PI / sides);
+  const slant = Math.sqrt(height * height + inradius * inradius);
+  const tilt = (Math.atan2(height, inradius) * 180) / Math.PI;
+  const base = 2 * radius * Math.sin(Math.PI / sides);
+  const indices = Array.from({ length: sides }, (_, i) => i);
+
+  return (
+    <div className="ds-crystal-spin">
+      {indices.map((i) => (
+        <div
+          key={`top-${i}`}
+          className={`ds-facet ds-facet--top ds-facet--${i % 3}`}
+          style={{
+            width: `${base}px`,
+            height: `${slant}px`,
+            transform: `translate(-50%, -100%) rotateY(${(360 / sides) * i}deg) translateZ(${inradius}px) rotateX(${tilt}deg)`,
+          }}
+        />
+      ))}
+      {indices.map((i) => (
+        <div
+          key={`bottom-${i}`}
+          className={`ds-facet ds-facet--bottom ds-facet--${(i + 1) % 3}`}
+          style={{
+            width: `${base}px`,
+            height: `${slant}px`,
+            transform: `translate(-50%, 0%) rotateY(${(360 / sides) * i}deg) translateZ(${inradius}px) rotateX(${-tilt}deg)`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 function EntryGate({ onEnter }: { onEnter: () => void }) {
   const [leaving, setLeaving] = useState(false);
   const [hit, setHit] = useState(false);
@@ -58,9 +99,9 @@ function EntryGate({ onEnter }: { onEnter: () => void }) {
         type="button"
         onClick={handleClick}
         aria-label="Enter the dream"
-        className="ds-shard-button"
+        className={`ds-crystal-button ${hit ? "ds-crystal-button--hit" : ""}`}
       >
-        <span className={`ds-shard ${hit ? "ds-shard--hit" : ""}`} />
+        <Crystal />
         <span className={`ds-shard-flash ${hit ? "ds-shard-flash--on" : ""}`} />
       </button>
       <p className="ds-eyebrow text-cyan-300/80">DreamShard</p>
